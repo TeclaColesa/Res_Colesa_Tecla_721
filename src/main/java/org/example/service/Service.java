@@ -8,10 +8,8 @@ import org.example.repository.SupplyRepository;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.filtering;
 import static java.util.stream.Collectors.toList;
@@ -183,6 +181,39 @@ public class Service {
                     calculateAstronautTotalScore(m)
             );
         });
+        System.out.printf("Leading spacecraft: %s%n", sortedAstronauts.get(0).getSpacecraft());
+    }
+
+
+    //7.Abschlussbericht
+    //Erstellen Sie die Datei mission_report.txt, welche die
+    //Anzahl der MissionEvents pro MissionEventType (basierend
+    //auf events.json) enthält.
+    //Sortierung:
+    //● zuerst nach Anzahl absteigend
+    //● bei Gleichstand nach Name aufsteigend
+    //Ausgabeformat:
+    //<TYPE> -> <ANZAHL>
+
+    public void createMissionReport(){
+        Map<MissionEventType, Long> countsMissionEventsByType = missionEventRepository.findAll().stream()
+                .collect(Collectors.groupingBy(MissionEvent::getType, Collectors.counting()));
+
+        List<Map.Entry<MissionEventType, Long>> sorted =
+                countsMissionEventsByType.entrySet().stream()
+                        .sorted(
+                                Map.Entry.<MissionEventType, Long>comparingByValue(Comparator.reverseOrder())
+                                        .thenComparing(Map.Entry.comparingByKey())
+                        )
+                        .toList();
+
+        try (PrintWriter writer = new PrintWriter("mission_report.txt")) {
+            sorted.forEach(e -> writer.println(e.getKey() + " -> " + e.getValue()));
+            System.out.println("Datele au fost scrise in fisier txt");
+        } catch (Exception e) {
+            throw new RuntimeException("cannot write to file: " + "mission_report.txt", e);
+        }
+
     }
 
 

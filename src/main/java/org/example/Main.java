@@ -41,7 +41,7 @@ public class Main {
         service.calculateTotalScoreForAllAstronautsAndPrintTopFive();
         
         System.out.println("7.---------------------------------------------------------------------");
-
+        service.createMissionReport();
 
     }
 }

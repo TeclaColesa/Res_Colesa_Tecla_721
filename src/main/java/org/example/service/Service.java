@@ -53,5 +53,20 @@ public class Service {
         }
     }
 
+    //3.Sortierung der Astronauten
+    //Sortieren Sie die Liste aller Astronauten nach folgenden
+    //Kriterien:
+    //● zuerst nach experienceLevel absteigend
+    //● bei gleichem experienceLevel nach name aufsteigend
+    //Geben Sie anschließend die sortierte Liste auf der
+    //Konsole aus.
+
+    public void sortAstronautsByExperienceLevelAndName() {
+        List<Astronaut> sortedAstronauts = astronautRepository.findAll().stream()
+                .sorted(Comparator.comparingInt(Astronaut::getExperienceLevel).reversed().thenComparing(Astronaut::getName))
+                .collect(toList());
+        sortedAstronauts.forEach(System.out::println);
+    }
+
 
 }

@@ -35,7 +35,7 @@ public class Main {
         service.saveAstronautsToFileInReversedOrder();
 
         System.out.println("5.---------------------------------------------------------------------");
-
+        service.printFirstFiveMissionEvents();
 
         System.out.println("6.---------------------------------------------------------------------");
 

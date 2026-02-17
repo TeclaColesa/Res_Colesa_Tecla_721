@@ -2,6 +2,8 @@ package org.example.service;
 
 import org.example.model.Astronaut;
 import org.example.model.AstronautStatus;
+import org.example.model.MissionEvent;
+import org.example.model.MissionEventType;
 import org.example.repository.AstronautRepository;
 import org.example.repository.MissionEventRepository;
 import org.example.repository.SupplyRepository;
@@ -92,10 +94,52 @@ public class Service {
         } catch (Exception e) {
             throw new RuntimeException("cannot write to file: " + "astronauts_sorted.txt", e);
         }
-
-
     }
 
+
+//5.Punktberechnung
+//Implementieren Sie die Berechnung der computedPoints für
+//jedes MissionEvent gemäß den folgenden Regeln:
+//● EVA → computedPoints = basePoints + 2 * day
+//● SYSTEM_FAILURE → computedPoints = basePoints - 3 - day
+//● SCIENCE → computedPoints = basePoints + (day % 4)
+//● MEDICAL → computedPoints = basePoints - 2 * (day % 3)
+//● COMMUNICATION → computedPoints = basePoints + 5
+//Geben Sie anschließend die ersten 5 Events aus
+//events.json auf der Konsole aus.
+
+    //Event <id> -> raw=<basePoints> -> computed=<computedPoints>
+
+    public int computedPoints(MissionEvent event){
+        if (event.getType() == MissionEventType.EVA) {
+            return event.getBasePoints() + 2 * event.getDay();
+        } else if (event.getType() == MissionEventType.SYSTEM_FAILURE) {
+            return event.getBasePoints() -3 - event.getDay();
+        } else if (event.getType() == MissionEventType.SCIENCE){
+            return event.getBasePoints() + event.getDay() % 4;
+        } else if (event.getType() == MissionEventType.MEDICAL) {
+            return event.getBasePoints() -2 * (event.getDay() % 3);
+        } else //COMMUNICATION
+            return event.getBasePoints() + 5;
+    }
+
+
+    //TODO REVISIT!!!!!!!!!!
+    public void printFirstFiveMissionEvents(){
+        List<MissionEvent> firstFiveMissions= missionEventRepository.findAll().stream()
+                .limit(5)
+                .toList();
+
+        System.out.println("First 5 MissionEvents:");
+        firstFiveMissions.forEach(m -> {
+            int computedPoints = computedPoints(m);
+            System.out.printf("Event %s -> raw=%s -> computed=%s%n",
+                    m.getId(),
+                    m.getBasePoints(),
+                    computedPoints
+            );
+        });
+    }
 
 
 

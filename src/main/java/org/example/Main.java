@@ -32,7 +32,7 @@ public class Main {
         service.sortAstronautsByExperienceLevelAndName();
 
         System.out.println("4.---------------------------------------------------------------------");
-
+        service.saveAstronautsToFileInReversedOrder();
 
         System.out.println("5.---------------------------------------------------------------------");
 

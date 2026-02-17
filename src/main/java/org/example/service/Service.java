@@ -8,6 +8,9 @@ import org.example.repository.SupplyRepository;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -67,6 +70,33 @@ public class Service {
                 .collect(toList());
         sortedAstronauts.forEach(System.out::println);
     }
+
+//4.(1 Punkt) Schreiben in eine Datei
+    //Schreiben Sie die in Aufgabe 3 sortierte Astronauten Liste in umgekehrter Reihenfolge
+    //in die Datei astronauts_sorted.txt. Jeder Astronaut soll in einer
+    //eigenen Zeile gespeichert werden, im selben Format wie bei der Konsolenausgabe.
+
+    public void saveAstronautsToFileInReversedOrder(){
+        List<Astronaut> sortedAstronauts = astronautRepository.findAll().stream()
+                .sorted(Comparator.comparingInt(Astronaut::getExperienceLevel).reversed().thenComparing(Astronaut::getName))
+                .collect(toList());
+        List<Astronaut> reversedAstronauts = new ArrayList<>(sortedAstronauts);
+        Collections.reverse(reversedAstronauts);
+
+
+        try (PrintWriter writer = new PrintWriter("astronauts_sorted.txt")) {
+            for (Astronaut a : reversedAstronauts) {
+                writer.println(a.toString());
+            }
+            System.out.println("Datele au fost scrise in fisier txt");
+        } catch (Exception e) {
+            throw new RuntimeException("cannot write to file: " + "astronauts_sorted.txt", e);
+        }
+
+
+    }
+
+
 
 
 }

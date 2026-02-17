@@ -199,13 +199,24 @@ public class Service {
         Map<MissionEventType, Long> countsMissionEventsByType = missionEventRepository.findAll().stream()
                 .collect(Collectors.groupingBy(MissionEvent::getType, Collectors.counting()));
 
+//        List<Map.Entry<MissionEventType, Long>> sorted =
+//                countsMissionEventsByType.entrySet().stream()
+//                        .sorted(
+//                                Map.Entry.<MissionEventType, Long>comparingByValue(Comparator.reverseOrder())
+//                                        .thenComparing(Map.Entry.comparingByKey())
+//                        )
+//                        .toList();
+
+
         List<Map.Entry<MissionEventType, Long>> sorted =
                 countsMissionEventsByType.entrySet().stream()
                         .sorted(
                                 Map.Entry.<MissionEventType, Long>comparingByValue(Comparator.reverseOrder())
-                                        .thenComparing(Map.Entry.comparingByKey())
+                                        .thenComparing(e -> e.getKey().name())
                         )
                         .toList();
+
+
 
         try (PrintWriter writer = new PrintWriter("mission_report.txt")) {
             sorted.forEach(e -> writer.println(e.getKey() + " -> " + e.getValue()));

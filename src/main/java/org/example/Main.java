@@ -38,7 +38,7 @@ public class Main {
         service.printFirstFiveMissionEvents();
 
         System.out.println("6.---------------------------------------------------------------------");
-
+        service.calculateTotalScoreForAllAstronautsAndPrintTopFive();
         
         System.out.println("7.---------------------------------------------------------------------");
 

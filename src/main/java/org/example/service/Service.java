@@ -1,9 +1,6 @@
 package org.example.service;
 
-import org.example.model.Astronaut;
-import org.example.model.AstronautStatus;
-import org.example.model.MissionEvent;
-import org.example.model.MissionEventType;
+import org.example.model.*;
 import org.example.repository.AstronautRepository;
 import org.example.repository.MissionEventRepository;
 import org.example.repository.SupplyRepository;
@@ -16,6 +13,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static java.util.stream.Collectors.filtering;
 import static java.util.stream.Collectors.toList;
 
 public class Service {
@@ -123,8 +121,6 @@ public class Service {
             return event.getBasePoints() + 5;
     }
 
-
-    //TODO REVISIT!!!!!!!!!!
     public void printFirstFiveMissionEvents(){
         List<MissionEvent> firstFiveMissions= missionEventRepository.findAll().stream()
                 .limit(5)
@@ -141,6 +137,53 @@ public class Service {
         });
     }
 
+    //6.Ranking
+    //Berechnen Sie für jeden Astronauten den Gesamtwert
+    //totalScore nach folgender Formel:
+    //
+    //totalScore = Sum(computedPoints aus allen MissionEvents des
+    //Astronauten) + Sum(value aus allen Supplies des Astronauten)
+    //
+    //Anforderungen:
+    //● Berechnen Sie totalScore für alle Astronauten.
+    //● Geben Sie die Top 5 auf der Konsole aus, sortiert
+    //nach:
+    //● totalScore absteigend
+    //● bei Gleichstand name aufsteigend
+    //● Bestimmen und geben Sie zusätzlich das Leading
+    //spacecraft aus (= spacecraft des Astronauten auf
+    //Platz 1).
+
+    public int calculateAstronautTotalScore (Astronaut astronaut) {
+        int astronautId = astronaut.getId();
+
+        int sumComputedPointFromMissionEvents = missionEventRepository.findAll().stream()
+                .filter(e -> e.getAstronautId() == astronautId)
+                .mapToInt(this::computedPoints)
+                .sum();
+
+        int sumValuesFromSupplies = supplyRepository.findAll().stream()
+                .filter(s -> s.getAstronautId() == astronautId)
+                .mapToInt(Supply::getValue)
+                .sum();
+        return sumComputedPointFromMissionEvents + sumValuesFromSupplies;
+    }
+
+    public void calculateTotalScoreForAllAstronautsAndPrintTopFive(){
+        List<Astronaut> sortedAstronauts = astronautRepository.findAll().stream()
+                .sorted(Comparator.comparingInt(this::calculateAstronautTotalScore).reversed().thenComparing(Astronaut::getName))
+                .limit(5)
+                .collect(toList());
+        System.out.println("Top 5 Astronauts sorted by total score:");
+        sortedAstronauts.forEach(m -> {
+            System.out.printf("%s. %s (%s) -> %s%n",
+                    m.getId(),
+                    m.getName(),
+                    m.getSpacecraft(),
+                    calculateAstronautTotalScore(m)
+            );
+        });
+    }
 
 
 }
